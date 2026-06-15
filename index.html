@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>world climatic weather</title>
+    <link rel="stylesheet" href="style.css">
+   
+
+
+
+
+
+</head>
+<body>
+     <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter the city name" spellcheck="false">
+            <button><img src="images/search.png"></button>
+        </div>
+        <div class="error">
+        <p>Invalid city name</p>
+        </div>
+        <div class="weather">
+            <img src="images/rain.png" class="weather_images">
+            <h1 class="Temp">140F</h1>
+            <h2 class="City">London</h2>
+            <div class="details">
+                <div class="coloum">
+                    <img src="images/humidity.png">
+                    <p class="humidity">40%</p>
+                    <p>Humidity</p>
+                </div>
+                <div class="coloum">
+                    <img src="images/wind.png">
+                    <p class="wind">400 km/h</p>
+                    <p>Wind-Speed</p>
+                </div>
+                <div class="coloum">
+                    <img src="images/air-pollution.png">
+                    <p class="AQI">200</p>
+                    <p>A-Q-I</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const apikey="119a099e8eeb48ff87315842260506";
+        const apiurl="http://api.weatherapi.com/v1/current.json";
+        
+
+        const search_input=document.querySelector(".search input");
+        const search_button=document.querySelector(".search button");
+        const weatherIcon=document.querySelector(".weather_images");
+
+
+        async function checkweather(city){
+            //here await because fetch always give's the promise 
+            //so await is to wait for the promise to resolve
+            const responce= await fetch(`${apiurl}?key=${apikey}&q=${city}&aqi=yes`);
+            var data=await responce.json();
+            if(data.error){
+                document.querySelector(".error").style.display="block";
+                document.querySelector(".weather").style.display="none";
+            }
+            else {
+                
+
+            document.querySelector(".City").innerHTML=data.location.name;
+            document.querySelector(".Temp").innerHTML=Math.round(data.current.temp_c)+"°C";
+            document.querySelector(".humidity").innerHTML=data.current.humidity+"%";
+            document.querySelector(".wind").innerHTML=data.current.wind_kph+"Kmph";
+            document.querySelector(".AQI").innerHTML=data.current.air_quality.pm2_5;
+
+            document.querySelector(".weather").style.display="block";
+            document.querySelector(".error").style.display="none";  
+
+
+           const code = data.current.condition.code;
+
+if (code === 1000) {
+    // Sunny / Clear
+    weatherIcon.src = "images/clear.png";
+}
+else if ([1003, 1006, 1009].includes(code)) {
+    // Cloudy
+    weatherIcon.src = "images/clouds.png";
+}
+else if ([1030, 1135, 1147].includes(code)) {
+    // Mist / Fog
+    weatherIcon.src = "images/mist.png";
+}
+else if (
+    [
+        1063, 1072, 1150, 1153,
+        1168, 1171, 1180, 1183
+    ].includes(code)
+) {
+    // Drizzle / Light rain
+    weatherIcon.src = "images/drizzle.png";
+}
+else if (
+    [
+        1087,
+        1186, 1189, 1192, 1195,
+        1198, 1201,
+        1204, 1207,
+        1237,
+        1240, 1243, 1246,
+        1249, 1252,
+        1261, 1264,
+        1273, 1276
+    ].includes(code)
+) {
+    // Rain / Thunder / Sleet
+    weatherIcon.src = "images/rain.png";
+}
+else if (
+    [
+        1066, 1069,
+        1114, 1117,
+        1210, 1213, 1216, 1219,
+        1222, 1225,
+        1255, 1258,
+        1279, 1282
+    ].includes(code)
+) {
+    //snow
+    weatherIcon.src = "images/snow.png";
+}
+
+    
+        }
+
+    }
+
+        search_button.addEventListener("click",()=>{
+            checkweather(search_input.value);
+        })
+
+        search_input.addEventListener("keypress",(event)=>{
+            if(event.key==="Enter"){
+            checkweather(search_input.value);
+            }
+        })
+            
+            
+    </script>
+
+    
+</body>
+</html>
